@@ -1,0 +1,25 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add mojdomek.eu sensor",
+        "data": {
+          "device_id": "Device ID",
+          "scan_interval": "Scan interval (min)",
+          "max_age_hours": "Max data age (hours)"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "mojdomek.eu Options",
+        "data": {
+          "scan_interval": "Scan interval (min)",
+          "max_age_hours": "Max data age (hours)"
+        }
+      }
+    }
+  }
+}
