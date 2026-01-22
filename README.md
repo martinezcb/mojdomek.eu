@@ -17,11 +17,15 @@ Pozwala na monitorowanie poziomu szamba, wody deszczowej oraz innych zbiorników
 4. Znajdź integrację `mojdomek.eu` i kliknij **Download**.
 5. **Zrestartuj Home Assistant**.
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=martinezcb&repository=mojdomek.eu&category=integration)
+
 ### Konfiguracja
 1. Przejdź do **Ustawienia** → **Urządzenia oraz usługi**.
 2. Kliknij **Dodaj integrację** i wyszukaj `mojdomek.eu`.
 3. Podaj **ID urządzenia** (znajdziesz je na obudowie czujnika pod klapką baterii lub w panelu mojdomek.eu).
 4. Ustaw **Interwał odpytywania** (sugerowane 15-60 minut, aby oszczędzać baterię i zasoby serwera).
+
+[![Dodaj integrację do swojego Home Assistanta](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=mojdomek_eu)
 
 ---
 
