@@ -1,52 +1,80 @@
-import aiohttp
-import async_timeout
 import logging
+from datetime import timedelta, datetime
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from datetime import timedelta
-from homeassistant.helpers.update_coordinator import (
-    DataUpdateCoordinator,
-    UpdateFailed,
+from .const import (
+    DOMAIN, 
+    BASE_URL, 
+    CONF_DEVICE_ID, 
+    CONF_SCAN_INTERVAL, 
+    DEFAULT_SCAN_INTERVAL_MIN,
+    CONF_MAX_AGE,
+    DEFAULT_MAX_AGE
 )
-
-from .const import BASE_URL, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-
 class MojDomekCoordinator(DataUpdateCoordinator):
-    def __init__(self, hass, device_id, scan_interval):
-        self.device_id = device_id
+    """Koordynator pobierania danych z mojdomek.eu z miękkim Watchdogiem."""
 
+    def __init__(self, hass, session, entry):
+        self.device_id = entry.data[CONF_DEVICE_ID]
+        self.session = session
+        self.config_entry = entry
+        self.data_is_valid = True  # Nasza flaga świeżości danych
+
+        scan_interval = entry.options.get(
+            CONF_SCAN_INTERVAL, 
+            entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_MIN)
+        )
+        
         super().__init__(
             hass,
             _LOGGER,
-            name=f"{DOMAIN}_{device_id}",
-            update_interval=timedelta(minutes=scan_interval),
+            name=DOMAIN,
+            update_interval=timedelta(minutes=max(scan_interval, 1)),
         )
 
     async def _async_update_data(self):
-        params = {
-            "id": self.device_id,
-        }
+        """Pobranie danych i sprawdzenie ich wieku"""
+        max_age_hours = self.config_entry.options.get(
+            CONF_MAX_AGE, 
+            self.config_entry.data.get(CONF_MAX_AGE, DEFAULT_MAX_AGE)
+        )
 
+        url = f"{BASE_URL}?id={self.device_id}"
+        
+        # 1. Próba pobrania danych (błąd tylko przy braku sieci)
         try:
-            async with aiohttp.ClientSession() as session:
-                async with async_timeout.timeout(15):
-                    async with session.get(BASE_URL, params=params) as response:
-                        data = await response.json()
-
+            async with self.session.get(url, timeout=15) as response:
+                response.raise_for_status()
+                data = await response.json()
         except Exception as err:
-            raise UpdateFailed("Błąd komunikacji z mojdomek.eu") from err
+            raise UpdateFailed(f"Błąd połączenia z API: {err}")
 
-        # 🔴 BŁĄD LOGICZNY API
-        if "errorcode" in data:
-            if data.get("errorcode") == "745801":
-                raise UpdateFailed("Nieprawidłowy identyfikator czujnika")
+        # 2. Walidacja i miękki Watchdog
+        if not data or "locations" not in data or not data["locations"]:
+            raise UpdateFailed("API zwróciło pustą odpowiedź.")
 
-            raise UpdateFailed(data.get("errormessage", "Błąd API mojdomek.eu"))
+        location = data["locations"][0]
+        measurement = location.get("measurement", {})
+        api_time_str = measurement.get("datatime")
 
-        # 🔴 brak spodziewanych danych
-        if "locations" not in data:
-            raise UpdateFailed("Nieprawidłowa odpowiedź API")
+        if api_time_str:
+            try:
+                api_dt = datetime.strptime(api_time_str, "%Y-%m-%d %H:%M:%S")
+                diff_hours = (datetime.now() - api_dt).total_seconds() / 3600
+
+                if diff_hours > max_age_hours:
+                    _LOGGER.warning(
+                        "Dane dla %s są nieaktualne (wiek: %.2f h, limit: %s h)", 
+                        self.device_id, diff_hours, max_age_hours
+                    )
+                    self.data_is_valid = False
+                else:
+                    self.data_is_valid = True
+                
+            except (ValueError, TypeError):
+                self.data_is_valid = True
 
         return data

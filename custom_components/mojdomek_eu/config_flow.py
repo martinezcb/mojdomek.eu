@@ -1,67 +1,60 @@
-import aiohttp
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.core import callback
-from .const import DOMAIN, CONF_DEVICE_ID
-
-async def validate_input(device_id):
-    """Sprawdza, czy ID czujnika jest poprawne na serwerze mojdomek.eu"""
-    url = f"https://mojdomek.eu/api/api2.php?id={device_id}"
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, timeout=10) as resp:
-                if resp.status != 200:
-                    return "cannot_connect"
-                data = await resp.json()
-                if "errormessage" in data:
-                    return "invalid_id"
-        return None
-    except Exception:
-        return "cannot_connect"
+from .const import (
+    DOMAIN, 
+    CONF_DEVICE_ID, 
+    CONF_SCAN_INTERVAL, 
+    DEFAULT_SCAN_INTERVAL_MIN,
+    CONF_MAX_AGE,
+    DEFAULT_MAX_AGE
+)
 
 class MojDomekConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Obsługa konfiguracji i walidacji"""
+    """Obsługa instalacji przez UI"""
     VERSION = 1
 
     async def async_step_user(self, user_input=None):
-        errors = {}
         if user_input is not None:
-            # Sprawdzamy ID zanim utworzymy wpis
-            error = await validate_input(user_input[CONF_DEVICE_ID])
-            if not error:
-                return self.async_create_entry(
-                    title=f"Czujnik {user_input[CONF_DEVICE_ID]}", 
-                    data=user_input
-                )
-            errors["base"] = error
+            return self.async_create_entry(
+                title=f"mojdomek {user_input[CONF_DEVICE_ID]}", 
+                data=user_input
+            )
 
         data_schema = vol.Schema({
             vol.Required(CONF_DEVICE_ID): str,
-            vol.Required("scan_interval", default=15): int,
+            vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL_MIN): int,
+            vol.Optional(CONF_MAX_AGE, default=DEFAULT_MAX_AGE): int,
         })
 
-        return self.async_show_form(step_id="user", data_schema=data_schema, errors=errors)
+        return self.async_show_form(step_id="user", data_schema=data_schema)
 
     @staticmethod
-    @callback
     def async_get_options_flow(config_entry):
-        """Uruchamia okno opcji"""
-        return MojDomekOptionsFlowHandler()
+        return MojDomekOptionsFlowHandler(config_entry)
 
 class MojDomekOptionsFlowHandler(config_entries.OptionsFlow):
-    """Obsługa zmiany opcji (interwału)"""
+    """Obsługa przycisku KONFIGURUJ"""
+    def __init__(self, config_entry):
+        # Zmieniamy nazwę zmiennej, aby nie kolidowała z wbudowanym config_entry
+        self._entry = config_entry
+
     async def async_step_init(self, user_input=None):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        current_interval = self.config_entry.options.get(
-            "scan_interval", 
-            self.config_entry.data.get("scan_interval", 15)
+        # Pobieramy aktualne wartości używając naszej nowej nazwy zmiennej self._entry
+        current_interval = self._entry.options.get(
+            CONF_SCAN_INTERVAL, 
+            self._entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_MIN)
+        )
+        current_max_age = self._entry.options.get(
+            CONF_MAX_AGE, 
+            self._entry.data.get(CONF_MAX_AGE, DEFAULT_MAX_AGE)
         )
 
-        return self.async_show_form(
-            step_id="init",
-            data_schema=vol.Schema({
-                vol.Required("scan_interval", default=current_interval): int,
-            }),
-        )
+        options_schema = vol.Schema({
+            vol.Optional(CONF_SCAN_INTERVAL, default=current_interval): int,
+            vol.Optional(CONF_MAX_AGE, default=current_max_age): int,
+        })
+
+        return self.async_show_form(step_id="init", data_schema=options_schema)

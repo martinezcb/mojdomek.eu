@@ -3,10 +3,11 @@
     "step": {
       "user": {
         "title": "Dodaj czujnik mojdomek.eu",
-        "description": "Podaj identyfikator czujnika ze strony mojdomek.eu",
+        "description": "Podaj dane konfiguracyjne dla czujnika mojdomek.eu",
         "data": {
           "device_id": "Identyfikator czujnika (ID)",
-          "scan_interval": "Częstotliwość sprawdzania (min)"
+          "scan_interval": "Częstotliwość sprawdzania (min)",
+          "max_age_hours": "Maksymalny wiek danych (godziny)"
         }
       }
     },
@@ -20,7 +21,8 @@
       "init": {
         "title": "Opcje czujnika mojdomek.eu",
         "data": {
-          "scan_interval": "Częstotliwość sprawdzania (min)"
+          "scan_interval": "Częstotliwość sprawdzania (min)",
+          "max_age_hours": "Maksymalny wiek danych (godziny)"
         }
       }
     }

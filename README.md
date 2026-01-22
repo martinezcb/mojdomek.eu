@@ -3,16 +3,21 @@
 # mojdomek.eu – Home Assistant Integration
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
 
 Integracja Home Assistant dla czujników poziomu cieczy serwisu **mojdomek.eu**. 
-Pozwala na monitorowanie poziomu szamba, wody deszczowej oraz innych zbiorników.
+Pozwala na precyzyjne monitorowanie poziomu szamba, wody deszczowej oraz innych zbiorników bezpośrednio w Twoim inteligentnym domu.
 
-## 🚀 Instalacja
+## 🚀 Nowości w wersji 1.1.0
+* **System Watchdog**: Możliwość zdefiniowania maksymalnego wieku danych. Jeśli dane w API są starsze niż ustawiony limit, sensory automatycznie przechodzą w stan `niedostępny`, chroniąc Cię przed błędnymi odczytami.
+* **Dynamiczna Konfiguracja**: Zmiana interwału odświeżania oraz limitu ważności danych bez konieczności restartu Home Assistant.
+* **Sensor Binarny Statusu**: Sensor diagnostyczny z dynamiczną ikoną, do powiadomień i automatyzacji informujących o przeterminowaniu danych.
+
+## 📦 Instalacja
 
 ### Przez HACS (Zalecane)
 1. Otwórz **HACS** w Home Assistant.
-2. Kliknij trzy kropki w prawym górnym rogu i wybierz **Custom repositories** (Niestandardowe repozytoria).
+2. Kliknij trzy kropki w prawym górnym rogu i wybierz **Custom repositories**.
 3. Wklej link do tego repozytorium, wybierz kategorię **Integration** i kliknij **Add**.
 4. Znajdź integrację `mojdomek.eu` i kliknij **Download**.
 5. **Zrestartuj Home Assistant**.
@@ -22,8 +27,8 @@ Pozwala na monitorowanie poziomu szamba, wody deszczowej oraz innych zbiorników
 ### Konfiguracja
 1. Przejdź do **Ustawienia** → **Urządzenia oraz usługi**.
 2. Kliknij **Dodaj integrację** i wyszukaj `mojdomek.eu`.
-3. Podaj **ID urządzenia** (znajdziesz je na obudowie czujnika pod klapką baterii lub w panelu mojdomek.eu).
-4. Ustaw **Interwał odpytywania** (sugerowane 15-60 minut, aby oszczędzać baterię i zasoby serwera).
+3. Podaj **ID urządzenia** (znajdziesz je na obudowie czujnika lub w panelu mojdomek.eu).
+4. Opcjonalnie dostosuj **Interwał odpytywania** oraz **Maksymalny wiek danych** w opcjach integracji.
 
 [![Dodaj integrację do swojego Home Assistanta](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=mojdomek_eu)
 
@@ -36,12 +41,13 @@ Pozwala na monitorowanie poziomu szamba, wody deszczowej oraz innych zbiorników
 * **Temperatura** [°C]
 * **Napięcie baterii** [V] oraz **Stan baterii** [%]
 * **RSSI** [dBm] (Siła sygnału)
-* **Ostatni pomiar** (Czas ostatniej aktualizacji)
+* **Ostatni pomiar** (Czas odczytu zarejestrowany przez serwer)
 * **Statystyki**: Następne zapełnienie, Ostatnie opróżnienie
 
-### Diagnostyka (Domyślnie ukryte):
-*Nazwy lokalizacji, dane techniczne zbiornika, wersja oprogramowania oraz parametry alarmowe.*
-> Aby je włączyć, przejdź do urządzenia w HA, kliknij w nieaktywną encję i wybierz "Włącz encję".
+### Diagnostyka i Status:
+* **Dane aktualne (Binary Sensor)**: Pokazuje, czy dane z API mieszczą się w Twoim limicie czasowym. Posiada dynamiczną ikonę `mdi:database-eye`.
+* **Informacje o urządzeniu**: Nazwa lokalizacji, wersja oprogramowania, typ zbiornika.
+> Aby włączyć ukryte encje diagnostyczne, przejdź do urządzenia w HA, kliknij w nieaktywną encję i wybierz "Włącz encję".
 
 ---
 
@@ -49,4 +55,4 @@ Pozwala na monitorowanie poziomu szamba, wody deszczowej oraz innych zbiorników
 Jeśli masz problem z działaniem integracji, otwórz zgłoszenie w sekcji **Issues** na tym repozytorium.
 
 ---
-*Integracja nie jest oficjalnym produktem firmy mojdomek.eu, lecz narzędziem stworzonym przez społeczność dla użytkowników tego systemu.*
+*Integracja nie jest oficjalnym produktem firmy mojdomek.eu, lecz narzędziem stworzonym przez społeczność.*
