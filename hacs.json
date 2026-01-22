@@ -1,0 +1,7 @@
+{
+  "name": "mojdomek.eu",
+  "domain": "mojdomek_eu",
+  "country": "PL",
+  "homeassistant": "2025.0.0",
+  "render_readme": true
+}
