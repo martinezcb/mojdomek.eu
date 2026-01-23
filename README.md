@@ -28,7 +28,7 @@ Pozwala na precyzyjne monitorowanie poziomu szamba, wody deszczowej oraz innych 
 1. Przejdź do **Ustawienia** → **Urządzenia oraz usługi**.
 2. Kliknij **Dodaj integrację** i wyszukaj `mojdomek.eu`.
 3. Podaj **ID urządzenia** (znajdziesz je na obudowie czujnika lub w panelu mojdomek.eu).
-4. Opcjonalnie dostosuj **Interwał odpytywania** oraz **Maksymalny wiek danych** w opcjach integracji.
+4. Opcjonalnie dostosuj **Interwał odpytywania** oraz **Maksymalny wiek danych (0 - zawsze ważne)** w opcjach integracji.
 
 [![Dodaj integrację do swojego Home Assistanta](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=mojdomek_eu)
 
@@ -45,7 +45,7 @@ Pozwala na precyzyjne monitorowanie poziomu szamba, wody deszczowej oraz innych 
 * **Statystyki**: Następne zapełnienie, Ostatnie opróżnienie
 
 ### Diagnostyka i Status:
-* **Dane aktualne (Binary Sensor)**: Pokazuje, czy dane z API mieszczą się w Twoim limicie czasowym. Posiada dynamiczną ikonę `mdi:database-eye`.
+* **Dane aktualne (Binary Sensor)**: Pokazuje, czy dane z API mieszczą się w Twoim limicie czasowym.
 * **Informacje o urządzeniu**: Nazwa lokalizacji, wersja oprogramowania, typ zbiornika.
 > Aby włączyć ukryte encje diagnostyczne, przejdź do urządzenia w HA, kliknij w nieaktywną encję i wybierz "Włącz encję".
 
