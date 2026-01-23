@@ -44,7 +44,7 @@ class MojDomekCoordinator(DataUpdateCoordinator):
 
         url = f"{BASE_URL}?id={self.device_id}"
         
-        # 1. Próba pobrania danych (błąd tylko przy braku sieci)
+        # 1. Próba pobrania danych
         try:
             async with self.session.get(url, timeout=15) as response:
                 response.raise_for_status()
@@ -52,7 +52,7 @@ class MojDomekCoordinator(DataUpdateCoordinator):
         except Exception as err:
             raise UpdateFailed(f"Błąd połączenia z API: {err}")
 
-        # 2. Walidacja i miękki Watchdog
+        # 2. Walidacja struktury
         if not data or "locations" not in data or not data["locations"]:
             raise UpdateFailed("API zwróciło pustą odpowiedź.")
 
@@ -60,7 +60,11 @@ class MojDomekCoordinator(DataUpdateCoordinator):
         measurement = location.get("measurement", {})
         api_time_str = measurement.get("datatime")
 
-        if api_time_str:
+        # 3. Miękki Watchdog (0 -wyłączony)
+        if max_age_hours == 0:
+            self.data_is_valid = True
+            _LOGGER.debug("Sprawdzanie wieku danych dla %s jest wyłączone (limit = 0)", self.device_id)
+        elif api_time_str:
             try:
                 api_dt = datetime.strptime(api_time_str, "%Y-%m-%d %H:%M:%S")
                 diff_hours = (datetime.now() - api_dt).total_seconds() / 3600
@@ -75,6 +79,10 @@ class MojDomekCoordinator(DataUpdateCoordinator):
                     self.data_is_valid = True
                 
             except (ValueError, TypeError):
+                # W przypadku błędu formatu daty, uznajemy dane za ważne, by nie blokować sensora
                 self.data_is_valid = True
+        else:
+            # Jeśli w ogóle nie ma daty w API, uznajemy dane za ważne
+            self.data_is_valid = True
 
         return data
