@@ -18,11 +18,13 @@ SENSORS = {
     "rssi": ("RSSI", "dBm", SensorDeviceClass.SIGNAL_STRENGTH, SensorStateClass.MEASUREMENT, None, EntityCategory.DIAGNOSTIC, True),
     "temperature": ("Temperatura", "°C", SensorDeviceClass.TEMPERATURE, SensorStateClass.MEASUREMENT, None, EntityCategory.DIAGNOSTIC, True),
     "name": ("Nazwa lokalizacji", None, None, None, "mdi:map-marker", EntityCategory.DIAGNOSTIC, False),
+    "created": ("Data utworzenia", None, None, None, "mdi:calendar-plus", EntityCategory.DIAGNOSTIC, False),
     "max": ("Poziom maksymalny", "cm", None, None, "mdi:arrow-up-bold-box", EntityCategory.DIAGNOSTIC, False),
     "alarm_level": ("Poziom alarmowy", "cm", None, None, "mdi:bell-alert", EntityCategory.DIAGNOSTIC, False),
     "tanktype": ("Typ zbiornika", None, None, None, "mdi:tank", EntityCategory.DIAGNOSTIC, False),
-    "direction": ("Kierunek", None, None, None, "mdi:compass", EntityCategory.DIAGNOSTIC, False),
+    "direction": ("Kierunek zmian", None, None, None, "mdi:arrow-up-down", EntityCategory.DIAGNOSTIC, False),
     "mainboard": ("Płyta główna", None, None, None, "mdi:chip", EntityCategory.DIAGNOSTIC, False),
+    "software": ("Wersja oprogramowania", None, None, None, "mdi:chip", EntityCategory.DIAGNOSTIC, False),  
 }
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -75,3 +77,4 @@ class MojDomekSensor(CoordinatorEntity, SensorEntity):
             return None
         except Exception:
             return None
+
