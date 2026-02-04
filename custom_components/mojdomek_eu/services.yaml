@@ -1,0 +1,4 @@
+refresh:
+  name: Odśwież dane z mojdomek.eu
+  description: Wymusza natychmiastowe pobranie danych z API dla wszystkich urządzeń.
+  fields: {}
