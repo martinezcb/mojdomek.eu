@@ -10,8 +10,11 @@ Pozwala na precyzyjne monitorowanie poziomu szamba, wody deszczowej oraz innych 
 
 ## 🚀 Nowości w wersji 1.1.1
 * **Usługa wymuszenia odświeżenia**: Nowa usługa `mojdomek_eu.refresh` pozwala na natychmiastowe pobranie danych z API (np. przyciskiem na dashboardzie, automatyzacją) bez restartu integracji.
+
+## 🚀 Nowości w wersji 1.1.0
 * **System Watchdog (v1.1.0)**: Możliwość zdefiniowania maksymalnego wieku danych. Jeśli dane w API są starsze niż limit, sensory przechodzą w stan `niedostępny`.
 * **Sensor Binarny Statusu**: Diagnostyka poprawności danych w czasie rzeczywistym.
+
 
 ## 📦 Instalacja
 
