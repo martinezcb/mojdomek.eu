@@ -24,6 +24,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
     
+    
+    # Wymuszenie poobrania nowych danych z serwera
+    async def async_handle_refresh(call):
+        for coord in hass.data[DOMAIN].values():
+            await coord.async_request_refresh()
+
+    if not hass.services.has_service(DOMAIN, "refresh"):
+        hass.services.async_register(
+            DOMAIN,
+            "refresh",
+            async_handle_refresh,
+        )
+
+    
     # REJESTRACJA OBU PLATFORM
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
