@@ -9,7 +9,7 @@ Integracja Home Assistant dla czujników poziomu cieczy serwisu **mojdomek.eu**.
 Pozwala na precyzyjne monitorowanie poziomu szamba, wody deszczowej oraz innych zbiorników bezpośrednio w Twoim inteligentnym domu.
 
 ## 🚀 Nowości w wersji 1.1.1
-* **Usługa wymuszenia odświeżenia**: Nowa usługa `mojdomek_eu.refresh` pozwala na natychmiastowe pobranie danych z API (np. przyciskiem na dashboardzie) bez restartu integracji.
+* **Usługa wymuszenia odświeżenia**: Nowa usługa `mojdomek_eu.refresh` pozwala na natychmiastowe pobranie danych z API (np. przyciskiem na dashboardzie, automatyzacją) bez restartu integracji.
 * **System Watchdog (v1.1.0)**: Możliwość zdefiniowania maksymalnego wieku danych. Jeśli dane w API są starsze niż limit, sensory przechodzą w stan `niedostępny`.
 * **Sensor Binarny Statusu**: Diagnostyka poprawności danych w czasie rzeczywistym.
 
@@ -36,7 +36,7 @@ Pozwala na precyzyjne monitorowanie poziomu szamba, wody deszczowej oraz innych 
 
 ## 🛠 Usługi (Services)
 
-Integracja udostępnia usługę `mojdomek_eu.refresh`, która wymusza natychmiastową synchronizację danych z serwerem dla wszystkich skonfigurowanych urządzeń. Jest to idealne rozwiązanie, gdy chcesz ręcznie sprawdzić stan po opróżnieniu zbiornika bez czekania na automatyczny cykl odświeżania.
+Integracja udostępnia usługę `mojdomek_eu.refresh`, która wymusza natychmiastową synchronizację danych z serwerem dla wszystkich skonfigurowanych urządzeń. Jest to idealne rozwiązanie, gdy chcesz ręcznie pobrać dane z serwera w danej chwili, bez czekania na automatyczny cykl odświeżania.
 
 ---
 
