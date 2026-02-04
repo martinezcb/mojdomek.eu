@@ -2,14 +2,12 @@ import logging
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.exceptions import ConfigEntryNotReady
 
 from .const import DOMAIN
 from .coordinator import MojDomekCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-# Definiujemy platformy w jednym miejscu dla porządku
 PLATFORMS = ["sensor", "binary_sensor"]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -24,22 +22,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
     
-    
-    # Wymuszenie poobrania nowych danych z serwera
+    # Rejestracja platform
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    # Funkcja obsługi serwisu refresh
     async def async_handle_refresh(call):
+        _LOGGER.debug("Wymuszone odświeżenie danych dla wszystkich instancji %s", DOMAIN)
         for coord in hass.data[DOMAIN].values():
             await coord.async_request_refresh()
 
+    # Rejestruj usługę tylko, jeśli jeszcze nie istnieje
     if not hass.services.has_service(DOMAIN, "refresh"):
         hass.services.async_register(
             DOMAIN,
             "refresh",
             async_handle_refresh,
         )
-
-    
-    # REJESTRACJA OBU PLATFORM
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     entry.async_on_unload(entry.add_update_listener(update_listener))
     return True
@@ -49,8 +47,17 @@ async def update_listener(hass: HomeAssistant, entry: ConfigEntry):
     await hass.config_entries.async_reload(entry.entry_id)
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Usunięcie integracji - sprzątamy obie platformy"""
+    """Usunięcie integracji - sprzątamy platformy i usługi"""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    
     if unload_ok:
+        # Usuwamy dane tej konkretnej instancji
         hass.data[DOMAIN].pop(entry.entry_id)
+        
+        # Jeśli to była ostatnia instancja, usuwamy usługę z systemu
+        if not hass.data[DOMAIN]:
+            if hass.services.has_service(DOMAIN, "refresh"):
+                hass.services.async_remove(DOMAIN, "refresh")
+                _LOGGER.debug("Usunięto usługę refresh dla %s (brak aktywnych instancji)", DOMAIN)
+
     return unload_ok
