@@ -33,7 +33,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities(entities)
 
 class MojDomekSensor(CoordinatorEntity, SensorEntity):
-    _attr_has_entity_name = False
+    _attr_has_entity_name = True  
 
     def __init__(self, coordinator, entry, key):
         super().__init__(coordinator)
@@ -41,10 +41,9 @@ class MojDomekSensor(CoordinatorEntity, SensorEntity):
         friendly_name, unit, device_class, state_class, icon, category, enabled = SENSORS[key]
 
         self.key = key
-        self._attr_name = f"mojdomek {device_id} {friendly_name}"
-        tech_id = f"mojdomek_{device_id}_{friendly_name}".lower().replace(" ", "_")
-        self.entity_id = f"sensor.{tech_id}"
         self._attr_unique_id = f"mojdomek_{device_id}_{key}"
+        self._attr_name = friendly_name
+        self.entity_id = f"sensor.mojdomek_{device_id}_{key}".lower()
         self._attr_native_unit_of_measurement = unit
         self._attr_device_class = device_class
         self._attr_state_class = state_class
