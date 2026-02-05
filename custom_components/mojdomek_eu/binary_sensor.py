@@ -8,15 +8,15 @@ async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities([MojDomekBinaryStatusSensor(coordinator, entry)])
 
 class MojDomekBinaryStatusSensor(CoordinatorEntity, BinarySensorEntity):
-    _attr_has_entity_name = True 
+    _attr_has_entity_name = False  
 
     def __init__(self, coordinator, entry):
         super().__init__(coordinator)
         device_id = entry.data["device_id"]
         
-        self._attr_name = "Dane aktualne"
+
+        self._attr_name = f"mojdomek {device_id} Dane aktualne"
         self._attr_unique_id = f"mojdomek_{device_id}_status_binary"
-        self.entity_id = f"binary_sensor.mojdomek_{device_id}_status_binary"
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
         
         self._attr_device_info = DeviceInfo(
@@ -25,10 +25,6 @@ class MojDomekBinaryStatusSensor(CoordinatorEntity, BinarySensorEntity):
             manufacturer=MANUFACTURER,
             model=MODEL,
         )
-
-    @property
-    def available(self) -> bool:
-        return True
 
     @property
     def is_on(self) -> bool:
