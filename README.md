@@ -3,7 +3,7 @@
 # mojdomek.eu – Home Assistant Integration
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
-![Version](https://img.shields.io/badge/version-1.1.1-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.3-blue.svg)
 
 Integracja Home Assistant dla czujników poziomu cieczy serwisu **mojdomek.eu**. 
 Pozwala na precyzyjne monitorowanie poziomu szamba, wody deszczowej oraz innych zbiorników bezpośrednio w Twoim inteligentnym domu.
